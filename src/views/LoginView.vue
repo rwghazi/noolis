@@ -19,13 +19,13 @@
         <p> don't have an account yet?
             <router-link to="/register">Register</router-link>
         </p>
-        <p  class="errMsg" v-if="errMsg">{{errMsg}}</p>
+        <p class="errMsg" v-if="errMsg">{{ errMsg }}</p>
     </div>
 </template>
 
 <script setup>
-import axios from 'axios';
 import { ref } from "vue";
+import { supabase } from "../supabase/init";
 
 const form = ref({
     email: '',
@@ -34,21 +34,23 @@ const form = ref({
 
 let errMsg = ref('');
 
+async function loginUser() {
+    const { error } = await supabase.auth.signInWithPassword({
+        email: form.value.email,
+        password: form.value.password,
+    })
+    if (error) {
+        console.log('error', error)
+        error == "AuthApiError: Email not confirmed" ? errMsg.value = "Email not confirmed yet" : errMsg.value = "Wrong email or password"
+    } else {
+        console.log('success')
+        localStorage.setItem('email', form.value.email)
+        window.location.href = '/'
+    }
+}
+
 const login = () => {
-    axios.post('http://localhost:8000/login', form.value)
-        .then(res => {
-            console.log(res)
-            localStorage.setItem('token', res.data.data.token)
-            localStorage.setItem('name', res.data.data.name)
-            localStorage.setItem('userId', res.data.data.id)
-        })
-        .then(() => {
-            window.location.href = '/'
-        })
-        .catch(err => {
-            console.log(err)
-            errMsg.value = "Username or password is incorrect!"
-        })
+    loginUser()
 }
 
 
@@ -177,5 +179,4 @@ a {
         background-color: #333;
     }
 }
-
 </style>

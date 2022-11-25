@@ -6,13 +6,13 @@
                 <input class="title" type="text" placeholder="Write your title here ..." v-model="title">
                 <div v-if="!image">
                     <label class="cover-upload">
-                    <input type="file" accept="image/jpeg, image/png, image/jpg" v-on:change="onAddImage" />
-                    Upload Cover
-                </label>
+                        <input type="file" accept="image/jpeg, image/png, image/jpg" v-on:change="onAddImage" />
+                        Upload Cover
+                    </label>
                 </div>
                 <div class="cover">
-                        <img v-if="image" :src="image" />
-                    </div>
+                    <img v-if="image" :src="image" />
+                </div>
                 <textarea class="content" type="text" placeholder="Write your content here ..."
                     v-model="content"></textarea>
             </div>
@@ -32,9 +32,12 @@
 <script setup>
 import axios from 'axios';
 import { ref } from "vue";
-let id = localStorage.getItem('userId')
-let idInt = parseInt(id)
+import { supabase } from "../supabase/init";
 
+let idArticle = Date.now() + Math.random()
+
+let idUser = JSON.parse(localStorage.getItem('sb-sbvkyaygchjgseagabwl-auth-token')).user.id
+let author = JSON.parse(localStorage.getItem('sb-sbvkyaygchjgseagabwl-auth-token')).user.email
 
 let title = ref('')
 let content = ref('')
@@ -49,6 +52,34 @@ const onAddImage = (e) => {
     };
 };
 
+async function postArticle() {
+    const { error } = await supabase
+        .from('articles')
+        .insert([
+            { id: idArticle, title: title.value, content: content.value, image: image.value, user_id: idUser, is_draft: 'false', author: author  },
+        ])
+
+    if (error) {
+        console.log('zzz', error)
+    } else {
+        console.log('success')
+    }
+}
+
+async function postDraft() {
+    const { error } = await supabase
+        .from('articles')
+        .insert([
+            { id: idArticle, title: title.value, content: content.value, image: image.value, user_id: idUser, is_draft: 'true', author: author  },
+        ])
+
+    if (error) {
+        console.log('zzz', error)
+    } else {
+        console.log('success')
+    }
+}
+
 const submit = () => {
     const data = new FormData()
     data.append("file", image.value)
@@ -60,22 +91,15 @@ const submit = () => {
             console.log("ss", image.value)
         })
         .then(
-            axios.post('http://localhost:8000/articles', {
-                title: title.value,
-                content: content.value,
-                image: image.value,
-                user_id: idInt,
-                is_draft: false
-            })
+            postArticle()
                 .then(res => {
                     console.log(res)
-                    // window.location.href = '/'
-                })
-                .catch(err => {
-                    console.log(err)
+                    window.location.href = '/'
                 })
         )
-        .catch(err => console.log(err))
+        .catch(err => {
+            console.log(err)
+        })
 }
 
 const submitdraft = () => {
@@ -89,13 +113,7 @@ const submitdraft = () => {
             console.log("image >>", image)
         })
         .then(
-            axios.post('http://localhost:8000/articles', {
-                title: title.value,
-                content: content.value,
-                image: image.value,
-                user_id: idInt,
-                is_draft: true
-            })
+            postDraft()
                 .then(res => {
                     console.log(res)
                     window.location.href = '/'

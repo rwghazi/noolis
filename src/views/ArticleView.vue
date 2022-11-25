@@ -3,18 +3,18 @@
         <div class="container">
             <div class="article">
                 <div class="title">
-                    <h2>{{data.data.title}}</h2>
+                    <h2>{{article.title}}</h2>
                 </div>
                 <div class="author">
                     <img src="../assets/john.png" alt="">
-                    <p>{{data.data.user_id}}</p>&nbsp; • &nbsp;<p>{{moment(data.createdAt).format('MMMM D, YYYY')}}</p>
+                    <p>{{article.author}}</p>&nbsp; • &nbsp;<p>{{moment(article.createdAt).format('MMMM D, YYYY')}}</p>
                 </div>
                 <div class="content">
                     <div class="cover">
-                        <img :src=data.data.image alt="">
+                        <img :src=article.image alt="">
                     </div>
                     <p>
-                        {{data.data.content}}
+                        {{article.content}}
                     </p>
                 </div>
             </div>
@@ -24,14 +24,31 @@
 
 <script setup>
 import { useRoute } from 'vue-router'
-import { useFetch } from '../utils/fetch.js';
+// import { useFetch } from '../utils/fetch.js';
 import moment from 'moment';
+import { supabase } from "../supabase/init";
+import { ref } from 'vue'
+
+let article = ref(null) 
 
 const route = useRoute()
 let id = route.params.articleId
 
-const { data } = useFetch('http://localhost:8000/articles/' + id);
+async function getArticle() {
+    const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('id', id)
+        .single()
+    if (error) {
+        console.log('error', error)
+    } else {
+        console.log('success')
+        article.value = data
+    }
+}
 
+getArticle()
 
 </script>
 

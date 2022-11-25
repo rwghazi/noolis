@@ -29,8 +29,10 @@
 </template>
 
 <script setup>
-import axios from 'axios';
 import { ref } from "vue";
+import { supabase } from "../supabase/init";
+
+// let idUser = Date.now() + Math.random()
 
 const form = ref({
     name: '',
@@ -38,17 +40,27 @@ const form = ref({
     password: '',
 });
 
+async function registerUser() {
+    const { error } = await supabase.auth.signUp({
+        email: form.value.email,
+        password: form.value.password,
+    })
+
+    if (error) {
+        console.log('error', error)
+    } else {
+        console.log('success')
+        window.location.href = '/login'
+    }
+}
+
 
 //submit form
 const register = () => {
-    axios.post('http://localhost:8000/register', form.value)
+    registerUser()
         .then(res => {
             console.log(res)
-            localStorage.setItem('token', res.data.data.token)
-            localStorage.setItem('name', res.data.data.name)
-            localStorage.setItem('userId', res.data.data.id)
-
-            window.location.href = '/'
+            window.location.href = '/login'
         })
         .catch(err => {
             console.log(err)

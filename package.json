@@ -10,6 +10,7 @@
   "dependencies": {
     "@fontsource/playfair-display": "^4.5.12",
     "@fontsource/poppins": "^4.5.10",
+    "@supabase/supabase-js": "^2.1.1",
     "axios": "^1.1.3",
     "core-js": "^3.8.3",
     "moment": "^2.29.4",

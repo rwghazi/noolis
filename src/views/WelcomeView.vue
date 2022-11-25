@@ -4,11 +4,10 @@
     </div>
     <div class="articles">
         <h1>Newest Articles</h1>
-
-        <CardArticle :articles="data?.data" />
+        <CardArticle :articles="data" />
     </div>
     <div class="right">
-        <h2 v-if="name">Hi,&nbsp;{{name}}!</h2>
+        <p>{{user}}</p> <h2 v-if="email">Hi,&nbsp;{{ email }}!</h2>
     </div>
 </template>
 
@@ -16,9 +15,30 @@
 
 import "@fontsource/playfair-display";
 import CardArticle from '../components/CardArticle.vue';
-import { useFetch } from '../utils/fetch.js';
-let name = localStorage.getItem('name')
-const { data } = useFetch('https://63462f7c9eb7f8c0f875ffd3.mockapi.io/articles');
+import { supabase } from "../supabase/init";
+import { ref } from 'vue'
+
+let data = ref(null)
+let email = ref(null)
+let user = ref(null)
+
+email.value = JSON.parse(localStorage.getItem('sb-sbvkyaygchjgseagabwl-auth-token'))?.user.email
+
+async function getArticles() {
+    let { data: articles, error } = await supabase
+        .from('articles')
+        .select('*')
+        .order('id', { ascending: false })
+        .filter('is_draft', 'eq', 'false')
+        .limit(6)
+    if (error) {
+        console.log(error)
+    } else {
+        data.value = articles
+    }
+}
+
+getArticles()
 
 </script>
 
@@ -43,7 +63,7 @@ const { data } = useFetch('https://63462f7c9eb7f8c0f875ffd3.mockapi.io/articles'
 .right {
     position: absolute;
     top: 0%;
-    left: 92%;
+    right: 0%;
     margin: 16px;
 }
 
@@ -78,7 +98,7 @@ a {
     .articles {
         position: relative;
         left: 20%;
-        margin: 16px;
+        margin: 48px 16px 16px 16px;
     }
 }
 </style>

@@ -6,15 +6,13 @@
                 <div class="card-title">
                     <RouterLink :to="{name: 'article',  params: { articleId: article.id }}">
                         <p>{{article.title}}</p>
+                        <p class="date">{{moment(article.createdAt).format('MMMM D, YYYY')}}</p>
                     </RouterLink>
                 </div>
                 <div class="card-subtitle">
                     <div class="card-author">
                         <img src="../assets/john.png" alt="">
-                        <p>{{"john"}}</p>
-                    </div>
-                    <div class="card-date">
-                        <p>{{moment(article.createdAt).format('MMMM D, YYYY')}}</p>
+                        <p>{{article.author}}</p>
                     </div>
                 </div>
             </div>
@@ -116,5 +114,12 @@ a {
 
 a:hover {
     text-decoration: none;
+}
+
+.date {
+    font-family: "Poppins";
+    font-size: 14px!important;
+    font-weight: 400!important;
+    color: #929292;
 }
 </style>

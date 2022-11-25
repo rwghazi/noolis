@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <h2>Timeline</h2>
-        <div class="article" v-for="article in data.data || [] " :key="article.id">
+        <div class="article" v-for="article in article || [] " :key="article.id">
             <div class="title">
                 <hr>
                 <RouterLink :to="{name: 'article',  params: { articleId: article.id }}">
@@ -10,7 +10,7 @@
             </div>
             <div class="author">
                 <img src="../assets/john.png" alt="">
-                <p>{{article.user_id}}&nbsp; • &nbsp;{{moment(article.createdAt).format('MMMM D, YYYY')}}</p>
+                <p>{{article.author}}&nbsp; • &nbsp;{{moment(article.createdAt).format('MMMM D, YYYY')}}</p>
             </div>
             <div class="content">
                 <p>{{article.content}}</p>
@@ -23,10 +23,27 @@
 <script setup>
 
 import "@fontsource/poppins";
-import { useFetch } from '../utils/fetch.js';
+import { supabase } from "../supabase/init";
+import { ref } from 'vue'
 import moment from 'moment';
+let article = ref(null)
 
-const { data } = useFetch('https://63462f7c9eb7f8c0f875ffd3.mockapi.io/articles');
+async function getArticles() {
+    let { data: articles, error } = await supabase
+        .from('articles')
+        .select('*')
+        .order('id', { ascending: false })
+        .filter('is_draft', 'eq', 'false')
+        .limit(6)
+    if (error) {
+        console.log(error)
+    } else {
+        article.value = articles
+    }
+}
+
+getArticles()
+
 </script>
 
 <style scoped>

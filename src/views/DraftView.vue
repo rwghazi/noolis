@@ -1,8 +1,8 @@
 <template>
     <div class="container">
         <h2>Draft</h2>
-        <p v-if="!data.data">You don't have any draft yet</p>
-        <div class="article" v-for="article in data.data || [] " :key="article.id">
+        <p v-if="!article.value">You don't have any draft yet</p>
+        <div class="article" v-for="article in article || [] " :key="article.id">
             <div class="title">
                 <hr>
                 <RouterLink :to="{name: 'article',  params: { articleId: article.id }}">
@@ -11,7 +11,7 @@
             </div>
             <div class="author">
                 <img src="../assets/john.png" alt="">
-                <p>{{article.user_id}}&nbsp; • &nbsp;{{moment(article.createdAt).format('MMMM D, YYYY')}}</p>
+                <p>{{article.author}}&nbsp; • &nbsp;{{moment(article.createdAt).format('MMMM D, YYYY')}}</p>
             </div>
             <div class="content">
                 <p>{{article.content}}</p>
@@ -22,11 +22,28 @@
 
 <script setup>
 import "@fontsource/poppins";
-import { useFetch } from '../utils/fetch.js';
 import moment from 'moment';
-let userId = localStorage.getItem('userId')
-let userIdInt = parseInt(userId)
-const { data } = useFetch('http://localhost:8000/drafts/' + userIdInt);
+import { supabase } from "../supabase/init";
+import { ref } from 'vue'
+
+let userId = JSON.parse(localStorage.getItem('sb-sbvkyaygchjgseagabwl-auth-token')).user.id
+let article = ref(null)
+
+async function getDrafts() {
+    let { data: articles, error } = await supabase
+        .from('articles')
+        .select('*')
+        .order('id', { ascending: false })
+        .filter('is_draft', 'eq', 'true', 'and', 'user_id', 'eq', userId)
+        .limit(6)
+    if (error) {
+        console.log(error)
+    } else {
+        article.value = articles
+    }
+}
+
+getDrafts()
 
 </script>
 

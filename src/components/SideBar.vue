@@ -7,14 +7,28 @@
         </div>
         <div class="center-menu">
             <div class="write">
-                <RouterLink to="/write-article">
-                    <img src="../assets/ic_write.png" alt="">
-                </RouterLink>
+                <div v-if="!isAuthenticated">
+                    <RouterLink to="/login">
+                        <img src="../assets/ic_write.png" alt="">
+                    </RouterLink>
+                </div>
+                <div v-else>
+                    <RouterLink to="/write-article">
+                        <img src="../assets/ic_write.png" alt="">
+                    </RouterLink>
+                </div>
             </div>
             <div class="draft">
-                <RouterLink to="/drafts">
-                    <img src="../assets/ic_draft.png" alt="">
-                </RouterLink>
+                <div v-if="!isAuthenticated">
+                    <RouterLink to="/login">
+                        <img src="../assets/ic_draft.png" alt="">
+                    </RouterLink>
+                </div>
+                <div v-else>
+                    <RouterLink to="/drafts">
+                        <img src="../assets/ic_draft.png" alt="">
+                    </RouterLink>
+                </div>
             </div>
             <div class="timeline">
                 <RouterLink to="/timeline">
@@ -41,7 +55,7 @@
 <script setup>
 let isAuthenticated = false;
 
-localStorage.getItem('token') ? isAuthenticated = true : false;
+localStorage.getItem('sb-sbvkyaygchjgseagabwl-auth-token') ? isAuthenticated = true : false;
 
 
 
