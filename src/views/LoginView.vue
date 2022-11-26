@@ -44,7 +44,6 @@ async function loginUser() {
         error == "AuthApiError: Email not confirmed" ? errMsg.value = "Email not confirmed yet" : errMsg.value = "Wrong email or password"
     } else {
         console.log('success')
-        localStorage.setItem('email', form.value.email)
         window.location.href = '/'
     }
 }

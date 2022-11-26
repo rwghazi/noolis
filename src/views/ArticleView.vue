@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="container">
-            <div class="article">
+            <div class="article" v-if="article">
                 <div class="title">
                     <h2>{{article.title}}</h2>
                 </div>
@@ -18,13 +18,16 @@
                     </p>
                 </div>
             </div>
+            <div v-else>
+                <PulseLoader color="#000" size="14px"/>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
 import { useRoute } from 'vue-router'
-// import { useFetch } from '../utils/fetch.js';
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 import moment from 'moment';
 import { supabase } from "../supabase/init";
 import { ref } from 'vue'

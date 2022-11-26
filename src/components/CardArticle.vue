@@ -6,7 +6,7 @@
                 <div class="card-title">
                     <RouterLink :to="{name: 'article',  params: { articleId: article.id }}">
                         <p>{{article.title}}</p>
-                        <p class="date">{{moment(article.createdAt).format('MMMM D, YYYY')}}</p>
+                        <p class="date">{{moment(article.created_at).format('MMMM D, YYYY')}}</p>
                     </RouterLink>
                 </div>
                 <div class="card-subtitle">
@@ -37,13 +37,13 @@ const articles = defineProps({
 <style scoped>
 .card {
     width: 300px;
-    min-height: 400px;
+    height: 400px;
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 32px;
+    margin-bottom: 80px;
     margin-right: 20px;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
@@ -66,7 +66,7 @@ const articles = defineProps({
 }
 
 .card-content {
-    background-color: white;
+    background-color: #f8f8f8;
     margin-top: -64px;
     width: 85%;
     padding: 16px;
@@ -80,7 +80,7 @@ const articles = defineProps({
     justify-content: space-between;
     font-size: 14px;
     color: #929292;
-    margin-bottom: 32px;
+    /* margin-bottom: 32px; */
 }
 
 .card-author {

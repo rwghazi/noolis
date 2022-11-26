@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <h2>Draft</h2>
-        <p v-if="!article.value">You don't have any draft yet</p>
+        <p v-if="!article">You don't have any draft yet!</p>
         <div class="article" v-for="article in article || [] " :key="article.id">
             <div class="title">
                 <hr>
@@ -34,7 +34,8 @@ async function getDrafts() {
         .from('articles')
         .select('*')
         .order('id', { ascending: false })
-        .filter('is_draft', 'eq', 'true', 'and', 'user_id', 'eq', userId)
+        .filter('is_draft', 'eq', 'true')
+        .filter('user_id', 'eq', userId)
         .limit(6)
     if (error) {
         console.log(error)

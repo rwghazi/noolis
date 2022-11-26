@@ -4,11 +4,17 @@
     </div>
     <div class="articles">
         <h1>Newest Articles</h1>
-        <CardArticle :articles="data" />
+        <div v-if="data">
+            <CardArticle :articles="data" />
+        </div>
+        <div v-else>
+            <PulseLoader color="#000" size="14px" />
+        </div>
     </div>
     <div class="right">
-        <p>{{user}}</p> <h2 v-if="email">Hi,&nbsp;{{ email }}!</h2>
+        <h2 v-if="email">{{ email }}</h2>
     </div>
+
 </template>
 
 <script setup>
@@ -17,10 +23,11 @@ import "@fontsource/playfair-display";
 import CardArticle from '../components/CardArticle.vue';
 import { supabase } from "../supabase/init";
 import { ref } from 'vue'
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
+
 
 let data = ref(null)
 let email = ref(null)
-let user = ref(null)
 
 email.value = JSON.parse(localStorage.getItem('sb-sbvkyaygchjgseagabwl-auth-token'))?.user.email
 
@@ -65,6 +72,12 @@ getArticles()
     top: 0%;
     right: 0%;
     margin: 16px;
+    color: #959595;
+}
+
+.right h2 {
+    font-weight: 400;
+    font-size: 12px;
 }
 
 h1,

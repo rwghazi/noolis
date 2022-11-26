@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" v-if="article">
         <h2>Timeline</h2>
         <div class="article" v-for="article in article || [] " :key="article.id">
             <div class="title">
@@ -17,6 +17,9 @@
             </div>
         </div>
     </div>
+    <div class="container" v-else>
+        <PulseLoader color="#000" size="14px"/>
+    </div>
 
 </template>
 
@@ -26,6 +29,9 @@ import "@fontsource/poppins";
 import { supabase } from "../supabase/init";
 import { ref } from 'vue'
 import moment from 'moment';
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
+
+
 let article = ref(null)
 
 async function getArticles() {

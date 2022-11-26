@@ -44,8 +44,8 @@
         </div>
 
         <div v-if="isAuthenticated" class="login-btn">
-            <div class="profile-img">
-                <img src="../assets/john.png" alt="">
+            <div class="logout-btn" @click="logout">
+                <img src="../assets/ic_logout.png" alt="">
             </div>
         </div>
     </div>
@@ -57,7 +57,11 @@ let isAuthenticated = false;
 
 localStorage.getItem('sb-sbvkyaygchjgseagabwl-auth-token') ? isAuthenticated = true : false;
 
-
+const logout = () => {
+    localStorage.removeItem('sb-sbvkyaygchjgseagabwl-auth-token');
+    isAuthenticated = false;
+    window.location.href = '/';
+}
 
 
 </script>
@@ -99,6 +103,10 @@ localStorage.getItem('sb-sbvkyaygchjgseagabwl-auth-token') ? isAuthenticated = t
     width: 70%;
     border-top: 2px solid #929292;
     padding-top: 16px;
+}
+
+.logout-btn{
+    cursor: pointer;
 }
 
 .center-menu {
