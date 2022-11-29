@@ -1,8 +1,8 @@
 <template>
     <div class="wrapper">
         <form v-on:submit.prevent="submitForm">
-            <div class="container">
-                <h2>New Post</h2>
+            <div class="container" v-if="article">
+                <h2>Edit Article</h2>
                 <input class="title" type="text" placeholder="Write your title here ..." v-model="title">
                 <div v-if="!image">
                     <label class="cover-upload">
@@ -16,13 +16,16 @@
                 <textarea class="content" type="text" placeholder="Write your content here ..."
                     v-model="content"></textarea>
             </div>
-
+            <div class="container" v-else>
+                <h2>Edit Article</h2>
+                <PulseLoader color="#000" size="14px" />
+            </div>
             <div class="aside">
                 <button @click="submit" class="primary">
                     Post
                 </button>
                 <button @click="submitdraft" class="secondary">
-                    Save as draft
+                    Save draft
                 </button>
             </div>
         </form>
@@ -30,86 +33,90 @@
 </template>
 
 <script setup>
-import axios from 'axios';
+
 import { ref } from "vue";
 import { supabase } from "../supabase/init";
+import { useRoute } from 'vue-router'
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
-let idArticle = Date.now() + Math.random()
+const route = useRoute()
+let idArticle = route.params.articleId
 
-let idUser = JSON.parse(localStorage.getItem('sb-sbvkyaygchjgseagabwl-auth-token')).user.id
-let author = JSON.parse(localStorage.getItem('sb-sbvkyaygchjgseagabwl-auth-token')).user.email
 
-let title = ref('')
-let content = ref('')
-let image = ref('')
-let img = ref(null)
+let article = ref(null)
 
-const onAddImage = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-        image.value = reader.result;
-    };
-};
+let title = ref(null)
+let content = ref(null)
+let image = ref(null)
+
+async function getArticle() {
+    const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('id', idArticle)
+        .single()
+    if (error) {
+        console.log('error', error)
+    } else {
+        console.log('success')
+        article.value = data
+        title.value = data.title
+        content.value = data.content
+        image.value = data.image
+    }
+}
+
+getArticle()
 
 async function postArticle() {
     const { error } = await supabase
         .from('articles')
-        .insert([
-            { id: idArticle, title: title.value, content: content.value, image: img.value, user_id: idUser, is_draft: 'false', author: author  },
+        .update([
+            { id: idArticle, title: title.value, content: content.value, image: image.value, user_id: article.value.user_id, is_draft: 'false', author: article.value.author },
         ])
+        .eq('id', idArticle)
 
     if (error) {
         console.log('zzz', error)
     } else {
         console.log('success')
-        window.location.href = '/'
     }
 }
 
 async function postDraft() {
     const { error } = await supabase
         .from('articles')
-        .insert([
-            { id: idArticle, title: title.value, content: content.value, image: img.value, user_id: idUser, is_draft: 'true', author: author  },
+        .update([
+            { id: idArticle, title: title.value, content: content.value, image: image.value, user_id: article.value.user_id, is_draft: 'true', author: article.value.author },
         ])
+        .eq('id', idArticle)
+
     if (error) {
         console.log('zzz', error)
     } else {
         console.log('success')
-        window.location.href = '/drafts'
     }
 }
 
 const submit = () => {
-    const data = new FormData()
-    data.append("file", image.value)
-    data.append("upload_preset", "lw7i8fyd")
-    data.append("cloud_name", "chcpyto")
-    axios.post(`https://api.cloudinary.com/v1_1/chcpyto/image/upload`, data)
+    postArticle()
         .then(res => {
-            img.value = res.data.url
-            img.value != undefined ? postArticle() : null
-        })
-        .catch(err => {
-            console.log(err)
-        })
-}
-
-const submitdraft = () => {
-    const data = new FormData()
-    data.append("file", image.value)
-    data.append("upload_preset", "lw7i8fyd")
-    data.append("cloud_name", "chcpyto")
-    axios.post(`https://api.cloudinary.com/v1_1/chcpyto/image/upload`, data)
-        .then(res => {
-            img.value = res.data.url
-            console.log("image draft>>", img.value)
-            img.value != undefined ? postDraft() : null
+            console.log(res)
+            window.location.href = '/'
         })
         .catch(err => console.log(err))
 }
+
+const submitdraft = () => {
+
+    postDraft()
+        .then(res => {
+            console.log(res)
+            window.location.href = '/drafts'
+        })
+        .catch(err => console.log(err))
+}
+
 
 </script>
 

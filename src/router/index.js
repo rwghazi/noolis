@@ -9,6 +9,7 @@ import TimelineView from '../views/TimelineView.vue'
 import ArticleView from '../views/ArticleView.vue'
 import WriteArticleView from '../views/WriteArticleView.vue'
 import DraftView from '../views/DraftView.vue'
+import EditView from '../views/EditView.vue'
 
 
 const router = createRouter({
@@ -47,6 +48,11 @@ const router = createRouter({
             path: '/drafts',
             name: 'drafts',
             component: DraftView
+        },
+        {
+            path: '/edit/:articleId',
+            name: 'edit',
+            component: EditView
         }
     ]
 })

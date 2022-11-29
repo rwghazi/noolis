@@ -18,6 +18,7 @@
         </div>
     </div>
     <div class="container" v-else>
+        <h2>Timeline</h2>
         <PulseLoader color="#000" size="14px"/>
     </div>
 

@@ -1,22 +1,26 @@
 <template>
-    <div class="container">
+    <div class="container" v-if="article">
         <h2>Draft</h2>
-        <p v-if="!article">You don't have any draft yet!</p>
+        <p v-if="!article.length">You don't have any draft yet!</p>
         <div class="article" v-for="article in article || [] " :key="article.id">
             <div class="title">
                 <hr>
-                <RouterLink :to="{name: 'article',  params: { articleId: article.id }}">
-                    <h2>{{article.title}}</h2>
+                <RouterLink :to="{ name: 'edit', params: { articleId: article.id } }">
+                    <h2>{{ article.title }}</h2>
                 </RouterLink>
             </div>
             <div class="author">
                 <img src="../assets/john.png" alt="">
-                <p>{{article.author}}&nbsp; • &nbsp;{{moment(article.createdAt).format('MMMM D, YYYY')}}</p>
+                <p>{{ article.author }}&nbsp; • &nbsp;{{ moment(article.createdAt).format('MMMM D, YYYY') }}</p>
             </div>
             <div class="content">
-                <p>{{article.content}}</p>
+                <p>{{ article.content }}</p>
             </div>
         </div>
+    </div>
+    <div class="container" v-else>
+        <h2>Draft</h2>
+        <PulseLoader color="#000" size="14px" />
     </div>
 </template>
 
@@ -25,6 +29,7 @@ import "@fontsource/poppins";
 import moment from 'moment';
 import { supabase } from "../supabase/init";
 import { ref } from 'vue'
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
 let userId = JSON.parse(localStorage.getItem('sb-sbvkyaygchjgseagabwl-auth-token')).user.id
 let article = ref(null)

@@ -50,6 +50,7 @@ async function getArticle() {
         article.value = data
     }
 }
+// console.log(article.value)
 
 getArticle()
 
