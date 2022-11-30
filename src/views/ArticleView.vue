@@ -41,7 +41,7 @@ import { ref } from 'vue'
 
 let article = ref(null)
 
-let userEmail = JSON.parse(localStorage.getItem('sb-sbvkyaygchjgseagabwl-auth-token')).user.email
+let userEmail = JSON.parse(localStorage.getItem('sb-sbvkyaygchjgseagabwl-auth-token'))?.user.email
 
 const route = useRoute()
 let id = route.params.articleId
