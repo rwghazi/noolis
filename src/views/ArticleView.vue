@@ -3,23 +3,30 @@
         <div class="container">
             <div class="article" v-if="article">
                 <div class="title">
-                    <h2>{{article.title}}</h2>
+                    <h2>{{ article.title }}</h2>
                 </div>
                 <div class="author">
                     <img src="../assets/john.png" alt="">
-                    <p>{{article.author}}</p>&nbsp; • &nbsp;<p>{{moment(article.createdAt).format('MMMM D, YYYY')}}</p>
+                    <p>{{ article.author }}</p>&nbsp; • &nbsp;
+                    <p>{{ moment(article.createdAt).format('MMMM D, YYYY') }}</p>
+                    <div class="option" v-if="userEmail === article.author">
+                        <RouterLink :to="{ name: 'edit', params: { articleId: article.id } }">
+                            <img src="../assets/ic_edit.png" alt="" title="info goes here">
+                        </RouterLink>
+                        <img  @click="deleteArticle" src="../assets/ic_delete.png" alt="">
+                    </div>
                 </div>
                 <div class="content">
                     <div class="cover">
                         <img :src=article.image alt="">
                     </div>
                     <p>
-                        {{article.content}}
+                        {{ article.content }}
                     </p>
                 </div>
             </div>
             <div v-else>
-                <PulseLoader color="#000" size="14px"/>
+                <PulseLoader color="#000" size="14px" />
             </div>
         </div>
     </div>
@@ -32,7 +39,9 @@ import moment from 'moment';
 import { supabase } from "../supabase/init";
 import { ref } from 'vue'
 
-let article = ref(null) 
+let article = ref(null)
+
+let userEmail = JSON.parse(localStorage.getItem('sb-sbvkyaygchjgseagabwl-auth-token')).user.email
 
 const route = useRoute()
 let id = route.params.articleId
@@ -50,10 +59,20 @@ async function getArticle() {
         article.value = data
     }
 }
-// console.log(article.value)
-
 getArticle()
 
+async function deleteArticle() {
+    const { error } = await supabase
+        .from('articles')
+        .delete()
+        .eq('id', id)
+    if (error) {
+        console.log('error', error)
+    } else {
+        console.log('success')
+        window.location.href = '/'
+    }
+}
 </script>
 
 
@@ -111,6 +130,15 @@ getArticle()
     max-height: 300px;
     width: 100%;
     object-fit: cover;
+}
+
+.option {
+    margin-left: auto;
+}
+
+.option img {
+    height: 24px;
+    cursor: pointer;
 }
 
 @media screen and (max-width: 768px) {

@@ -25,7 +25,7 @@
                     Post
                 </button>
                 <button @click="submitdraft" class="secondary">
-                    Save draft
+                    Save as draft
                 </button>
             </div>
         </form>
