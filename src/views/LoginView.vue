@@ -41,7 +41,7 @@ async function loginUser() {
     })
     if (error) {
         console.log('error', error)
-        error == "AuthApiError: Email not confirmed" ? errMsg.value = "Email not confirmed yet" : errMsg.value = "Wrong email or password"
+        error == "AuthApiError: Email not confirmed" ? errMsg.value = "Please confirm your email first" : errMsg.value = "Wrong email or password"
     } else {
         console.log('success')
         window.location.href = '/'

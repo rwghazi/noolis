@@ -16,7 +16,7 @@
                 <input type="password" placeholder="Password" v-model="form.password" />
             </div>
             <div class="input">
-                <input type="password" placeholder="Confirm Password" v-model="form.password" />
+                <input type="password" placeholder="Confirm Password" v-model="form.confirmPassword" />
             </div>
             <div class="button">
                 <button @click="register">Register</button>
@@ -25,6 +25,7 @@
         <p> already have an account?
             <router-link to="/login">Login</router-link>
         </p>
+        <p class="errMsg" v-if="errMsg">{{ errMsg }}</p>
     </div>
 </template>
 
@@ -38,10 +39,44 @@ const form = ref({
     name: '',
     email: '',
     password: '',
+    confirmPassword: '',
 });
 
+let errMsg = ref('');
+
 async function registerUser() {
-    const { error } = await supabase.auth.signUp({
+
+    if (form.value.name == '') {
+        errMsg.value = "Name can't be empty"
+        return
+    }
+
+    if (form.value.email == '') {
+        errMsg.value = "Email can't be empty"
+        return
+    }
+
+    if(!form.value.email.includes('@')){
+        errMsg.value = "Email must be valid"
+        return
+    }
+
+    if (form.value.password == '') {
+        errMsg.value = "Password can't be empty"
+        return
+    }
+
+    if (form.value.password.length < 6) {
+        errMsg.value = "Password must be at least 6 characters"
+        return
+    }
+
+    if (form.value.password !== form.value.confirmPassword) {
+        errMsg.value = "Password doesn't match"
+        return
+    }
+
+    const {error} = await supabase.auth.signUp({
         email: form.value.email,
         password: form.value.password,
     })
@@ -60,7 +95,6 @@ const register = () => {
     registerUser()
         .then(res => {
             console.log(res)
-            window.location.href = '/login'
         })
         .catch(err => {
             console.log(err)
@@ -142,6 +176,11 @@ a {
     text-decoration: none;
     color: black;
     font-weight: bold;
+}
+
+.errMsg {
+    color: red;
+    margin: 0;
 }
 
 @media screen and (max-width: 768px) {
